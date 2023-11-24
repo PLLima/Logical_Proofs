@@ -38,4 +38,12 @@ theorem ex_1_f (p1 : p → r ∧ s) (p2 : q → r ∧ s) (p3 : p ∨ q) : r := b
   apply p1
   apply p2
 
-theorem ex_1_g (p1 : ¬p ∨ q) : (¬p ∨ ¬q) ∨ q := by sorry
+theorem ex_1_g (p1 : ¬p ∨ q) : (¬p ∨ ¬q) ∨ q := by
+  apply Or.elim p1
+  intro h1
+  apply Or.inl
+  apply Or.inl
+  exact h1
+  intro h2
+  apply Or.inr
+  exact h2
