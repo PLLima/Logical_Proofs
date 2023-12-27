@@ -66,3 +66,35 @@ theorem q_4_4 (p1 : ¬(p → q)) : p ∧ ¬q := by
   intro h6
   apply False.elim
   apply h5 h6
+
+variable (U : Prop)
+variable (a : U)
+variable (P Q R : U → Prop)
+
+theorem q_5_1 (p1 : R a) : ∀x, ∃y, P x → R y := by
+  intro x0
+  apply Exists.intro
+  intro h1
+  exact p1
+
+theorem q_5_2 (p1 : ∀x, P x) : ¬∃x, ¬(P x) := by
+  intro h1
+  apply Exists.elim h1
+  intro x0
+  intro h2
+  have h3 : P x0 := p1 x0
+  apply h2 h3
+
+theorem q_5_3 (p1 : ¬∃x, P x) : ∀x, ¬(P x) := by
+  intro x0
+  intro h1
+  apply p1
+  exists x0
+
+theorem q_5_4 (p1 : ∀x, P x) (p2 : ∃z, Q z) : ∃w, Q w ∧ P w := by
+  apply Exists.elim p2
+  intro z0
+  intro h1
+  have h2 : P z0 := p1 z0
+  have h3 : Q z0 ∧ P z0 := And.intro h1 h2
+  exists z0
