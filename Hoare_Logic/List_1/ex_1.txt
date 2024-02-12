@@ -1,0 +1,32 @@
+Código:
+
+ {⊤}
+
+ a := x + 1;
+ if (a-1=0)
+    then y:= 1
+    else y:= a
+
+ {y = x+1}
+
+Como não há nenhum loop, (1) = (2) = (1,2):
+
+1,2)
+
+ {⊤}                       | H-implic                                               |
+ {x + 1 = x + 1} |         |                                                        |
+ a := x + 1;     | H-atrib |                                                        |
+ {a = x + 1}     |         |                                                        |
+ if (a - 1 = 0)                                                             |       |
+                                                                            |       |
+    then {a = x + 1 && a - 1 = 0} === {x = a - 1 && a = 1}   | H-implic     |       |
+    {1 = x + 1} |                 === {x = 0}                |              |       |
+    y := 1      | H-atrib                                    |              |       | H-comp
+    {y = x + 1} |                                            |              | H-if  |
+                                                                            |       |
+    else {a = x + 1 && !(a - 1 = 0)} === {a = x + 1 && a <> 1} | H-implic   |       |
+    {a = x + 1} |                    === {a = x + 1}           |            |       |
+    y := a      | H-atrib                                      |            |       |
+    {y = x + 1} |                                              |            |       |
+                                                                            |       |
+ {y = x + 1}                                                                |       |
