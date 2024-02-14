@@ -1,0 +1,137 @@
+Código:
+
+{x > 0 && x = x0 && y > 0}
+
+  z := 0;
+  while y <= x do
+    z := z+1;
+    x := x-y;
+
+{z = x0 / y}
+
+1)
+
+Testando algumas iterações do loop:
+
+y = 1:
+0: x0 = 4, x = 4, y = 1, z = 0;
+1: x0 = 4, x = 3, y = 1, z = 1;
+2: x0 = 4, x = 2, y = 1, z = 2;
+3: x0 = 4, x = 1, y = 1, z = 3;
+4: x0 = 4, x = 0, y = 1, z = 4;
+
+y = 2:
+0: x0 = 4, x = 4, y = 2, z = 0;
+1: x0 = 4, x = 2, y = 2, z = 1;
+2: x0 = 4, x = 0, y = 2, z = 2;
+
+y = 3:
+0: x0 = 4, x = 4, y = 3, z = 0;
+1: x0 = 4, x = 1, y = 3, z = 1;
+
+Em toda iteração, x0 = x + y*z.
+
+-------------------------------------------------------------------------
+
+Validando o comando while com o invariante acima:
+  {x0 = x + y*z && y <= x} (i)
+  {x0 = x-y + y*(z+1)}
+    z := z+1;
+  {x0 = x-y + y*z}
+    x := x-y;
+  {x0 = x + y*z}
+
+i)
+Se
+ - x0 = x + y*z;
+ - y <= x;
+então
+ - x0 = x-y + y*(z+1) === x0 = x + y*z; (OK)
+
+ Logo, como essa tripla de Hoare é válida, então todo o trecho de while é válida sob correção parcial.
+
+--------------------------------------------------------------------------
+
+ Assim, finalizando:
+
+{x > 0 && x = x0 && y > 0} (iii)
+{x0 = x}
+  z := 0;
+{x0 = x + y*z}
+  while y <= x do
+    z := z+1;
+    x := x-y;
+{x0 = x + y*z && y > x} (ii)
+{z = x0 / y}
+
+ii)
+Se
+ - x0 = x + y*z;
+ - y > x;
+então
+ - z = x0 / y. (OK)
+
+iii)
+Se
+ - x > 0;
+ - x = x0;
+ - y > 0;
+então
+ - x0 = x; (OK)
+
+2)
+
+Para correção total, precisa-se determinar um variante e provar que ele completa a prova do loop.
+
+Testando o variante {x}, e adicionando {x ≥ 0} no invariante, observa-se que:
+
+  {x0 = x + y*z && x ≥ 0 && x = u && y <= x} (i)
+  {x0 = x-y + y*(z+1) && x ≥ y && x < u+y}
+    z := z+1;
+  {x0 = x-y + y*z && x ≥ y && x < u+y}
+    x := x-y;
+  {x0 = x + y*z && x ≥ 0 && x < u}
+
+i)
+Se
+ - x0 = x + y*z;
+ - x ≥ 0;
+ - x = u;
+ - y <= x;
+então
+ - x0 = x-y + y*(z+1) === x0 = x + y*z; (OK)
+ - x ≥ y; (OK)
+ - x < u+y === y < u+x. (OK)
+
+Logo, como essa tripla de Hoare é válida, então todo o trecho de while é válida sob correção total.
+
+--------------------------------------------------------------------------
+
+O resto do código segue da seguinte forma:
+
+{x > 0 && x = x0 && y > 0} (iii)
+{x0 = x && x ≥ 0}
+  z := 0;
+{x0 = x + y*z && x ≥ 0}
+  while y <= x do
+    z := z+1;
+    x := x-y;
+{x0 = x + y*z && x ≥ 0 && y > x} (ii)
+{z = x0 / y}
+
+ii)
+Se
+ - x0 = x + y*z;
+ - x ≥ 0;
+ - y > x;
+então
+ - z = x0 / y. (OK)
+
+iii)
+Se
+ - x > 0;
+ - x = x0;
+ - y > 0;
+então
+ - x0 = x; (OK)
+ - x ≥ 0. (OK)

@@ -1,0 +1,147 @@
+Código:
+
+{n > 0}
+
+ i := n;
+ f := 1;
+ h := 1;
+ while i > 1 do
+  (h := h+f;
+   f := h-f;
+   i := i-1)
+
+{f = fib(n)}
+
+1)
+
+Testando algumas iterações do loop:
+
+0: n = 4, i = 4, f = 1, h = 1;
+1: n = 4, i = 3, f = 1, h = 2;
+2: n = 4, i = 2, f = 2, h = 3;
+3: n = 4, i = 1, f = 3, h = 5;
+
+Em toda iteração, f = fib(n - i + 1) && h = fib(n - i + 2).
+
+-------------------------------------------------------------------------
+
+Validando o comando while com o invariante acima:
+   {f = fib(n - i + 1) && h = fib(n - i + 2) && i > 1} (i)
+   {h = fib(n - i + 2) && h+f = fib(n - i + 3)}
+   h := h+f;
+   {h-f = fib(n - i + 2) && h = fib(n - i + 3)}
+   f := h-f;
+   {f = fib(n - i + 2) && h = fib(n - i + 3)}
+   i := i-1
+   {f = fib(n - i + 1) && h = fib(n - i + 2)}
+
+i)
+Se
+ - f = fib(n - i + 1);
+ - h = fib(n - i + 2);
+ - i > 1;
+então
+ - h = fib(n - i + 2); (OK)
+ - h+f = fib(n - i + 3). (OK)
+
+ Logo, como essa tripla de Hoare é válida, então todo o trecho de while é válida sob correção parcial.
+
+--------------------------------------------------------------------------
+
+ Assim, finalizando:
+
+{n > 0}                                    (iii)                                                                     | H-implic
+{1 = fib(n - n + 1) && 1 = fib(n - n + 2)}                                                        |         |        |
+ i := n;                                                                                          | H-atrib |        |
+{1 = fib(n - i + 1) && 1 = fib(n - i + 2)}                                              |         |         |        |
+ f := 1;                                                                                | H-atrib           |        |
+{f = fib(n - i + 1) && 1 = fib(n - i + 2)}                                    |         |                   |        |
+ h := 1;                                                                      | H-atrib                     |        |
+{f = fib(n - i + 1) && h = fib(n - i + 2)}               |         |          |                             | H-comp |
+ while i > 1 do                                          |         |                                        |        |
+  (h := h+f;                                             | H-while |                                        |        |
+   f := h-f;                                             |         |                                        |        |
+   i := i-1)                                             |         |                                        |        |
+{f = fib(n - i + 1) && h = fib(n - i + 2) && i <= 1} (ii)|         |                                        |        |
+{f = fib(n)}                                                       | H-implic                               |        |
+
+ii)
+Se
+ - f = fib(n - i + 1);
+ - h = fib(n - i + 2);
+ - i <= 1;
+então
+ - f = fib(n). (OK)
+
+iii)
+Se
+ - n > 0;
+então
+ - 1 = fib(n - n + 1) === 1 = fib(1); (OK) 
+ - 1 = fib(n - n + 2) === 1 = fib(2). (OK)
+
+2)
+
+Para correção total, precisa-se determinar um variante e provar que ele completa a prova do loop.
+
+Testando o variante {i - 1}, e adicionando {i ≥ 1} no invariante, observa-se que:
+
+ {f = fib(n - i + 1) && h = fib(n - i + 2) &&  i ≥ 0 && i = u +1 && i > 1} (i)
+ {h = fib(n - i + 2) && h+f = fib(n - i + 3) &&  i ≥ 2 && i < u + 2}
+   h := h+f;
+ {h-f = fib(n - i + 2) && h = fib(n - i + 3) &&  i ≥ 2 && i < u + 2}
+   f := h-f;
+ {f = fib(n - i + 2) && h = fib(n - i + 3) &&  i ≥ 2 && i < u + 2}
+   i := i-1;
+ {f = fib(n - i + 1) && h = fib(n - i + 2) &&  i ≥ 1 && i - 1 < u}
+
+i)
+Se
+ - f = fib(n - i + 1);
+ - h = fib(n - i + 2);
+ - i ≥ 1;
+ - i = u + 1;
+ - i > 1;
+então
+ - h = fib(n - i + 2); (OK)
+ - h+f = fib(n - i + 3); (OK)
+ - i ≥ 2; (OK)
+ - i < u + 2. (OK)
+
+Logo, como essa tripla de Hoare é válida, então todo o trecho de while é válida sob correção total.
+
+--------------------------------------------------------------------------
+
+O resto do código segue da seguinte forma:
+
+{n > 0} (iii)                                                                                                             | H-implic
+{1 = fib(n - n + 1) && 1 = fib(n - n + 2) && n ≥ 1}                                                    |         |        |
+ i := n;                                                                                               | H-atrib |        |
+{1 = fib(n - i + 1) && 1 = fib(n - i + 2) && i ≥ 1}                                          |         |         |        |
+ f := 1;                                                                                     | H-atrib           |        |
+{f = fib(n - i + 1) && 1 = fib(n - i + 2) && i ≥ 1}                                |         |                   |        |
+ h := 1;                                                                           | H-atrib                     |        |
+{f = fib(n - i + 1) && h = fib(n - i + 2) && i ≥ 1}           |         |          |                             | H-comp |
+ while i > 1 do                                               |         |                                        |        |
+  (h := h+f;                                                  | H-while |                                        |        |
+   f := h-f;                                                  |         |                                        |        |
+   i := i-1)                                                  |         |                                        |        |
+{f = fib(n - i + 1) && h = fib(n - i + 2) && i ≥ 1 && i <= 1} |         |                                        |        |
+{f = fib(n)} (ii)                                                       | H-implic                               |        |
+
+ii)
+Se
+ - f = fib(n - i + 1);
+ - h = fib(n - i + 2);
+ - i ≥ 1;
+ - i <= 1;
+então
+ - f = fib(n). (OK)
+
+iii)
+Se
+ - n > 0;
+então
+ - 1 = fib(n - n + 1) === 1 = fib(1); (OK)
+ - 1 = fib(n - n + 2) === 1 = fib(2); (OK)
+ - n ≥ 1. (OK)
